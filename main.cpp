@@ -16,8 +16,26 @@
  * Output: After translating the matrix to its RREF, the program will output the resulting matrix to the terminal
 ***********************************************************************************************************************/
 
+#include <iostream>
+
+#include "./matrix.h"
+#include "./vector.h"
+
+using namespace std;
 
 //The driving function for the whole program.
 int main()
 {
+	//Variables
+	Matrix main;
+
+	//Obtain matrix dimensions from the user
+	
+	//Obtain matrix entries from the user
+	
+	//Perform matrix operations until the matrix is in RREF
+	
+	//Output the RREF matrix to the terminal
+
+	return 0;
 }
