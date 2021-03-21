@@ -1,15 +1,13 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-#include "./vector.h"
-
 using namespace std;
 
 class Matrix
 {
 	private:
-		int dimension;
-		Vector* vectors;
+		int num_rows;
+		int num_cols;
 
 	public:
 		Matrix();
@@ -17,12 +15,13 @@ class Matrix
 
 		void Print_Matrix();
 
-		int get_dimension();
-		Vector* get_vectors();
+		int get_num_rows();
+		int get_num_cols();
 
-		void set_dimension(int input_dimension);
-		void set_vectors(Vector* input_vectors);
+		void set_user_rows();
+		void set_user_cols();	
 		
+		void 
 }
 
 

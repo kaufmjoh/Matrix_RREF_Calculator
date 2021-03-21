@@ -19,7 +19,6 @@
 #include <iostream>
 
 #include "./matrix.h"
-#include "./vector.h"
 
 using namespace std;
 
@@ -30,7 +29,7 @@ int main()
 	Matrix main;
 
 	//Obtain matrix dimensions from the user
-	
+
 	//Obtain matrix entries from the user
 	
 	//Perform matrix operations until the matrix is in RREF
@@ -39,3 +38,12 @@ int main()
 
 	return 0;
 }
+
+
+
+
+
+
+
+
+
