@@ -34,14 +34,29 @@ void Matrix::print_Matrix()
 	}
 }
 
+
+void Matrix::set_user_rows()
+{
+	cout << "Enter the number of rows in the matrix: " << endl;
+	cin >> num_rows;
+}
+
+void Matrix::set_user_cols()
+{
+	cout << "Enter the number of columns in the matrix: " << endl;
+	cin >> num_cols;
+}
+
+
+
 int Matrix::get_num_rows()
 {
-	return num_rows();
+	return num_rows;
 }
 
 int Matrix::get_num_cols()
 {
-	return num_cols();
+	return num_cols;
 }
 
 

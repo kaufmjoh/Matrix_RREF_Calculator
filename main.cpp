@@ -29,7 +29,10 @@ int main()
 	Matrix main;
 
 	//Obtain matrix dimensions from the user
+	main.set_user_rows();
+	main.set_user_cols();
 
+	cout << main.get_num_rows() << "\t" << main.get_num_cols() << endl;
 	//Obtain matrix entries from the user
 	
 	//Perform matrix operations until the matrix is in RREF

@@ -9,11 +9,13 @@ class Matrix
 		int num_rows;
 		int num_cols;
 
+		int** entries;
+
 	public:
 		Matrix();
 		~Matrix();
 
-		void Print_Matrix();
+		void print_Matrix();
 
 		int get_num_rows();
 		int get_num_cols();
@@ -21,8 +23,7 @@ class Matrix
 		void set_user_rows();
 		void set_user_cols();	
 		
-		void 
-}
+};
 
 
 #endif
