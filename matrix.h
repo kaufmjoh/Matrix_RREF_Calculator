@@ -22,7 +22,10 @@ class Matrix
 
 		void set_user_rows();
 		void set_user_cols();	
-		
+
+		void create_matrix();		
+
+		void fill_matrix();
 };
 
 

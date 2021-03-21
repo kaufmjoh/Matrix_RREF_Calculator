@@ -34,21 +34,47 @@ void Matrix::print_Matrix()
 	}
 }
 
-
+//Get from the command line the number of rows in the matrix
 void Matrix::set_user_rows()
 {
-	cout << "Enter the number of rows in the matrix: " << endl;
+	cout << "Enter the number of rows in the matrix: ";
 	cin >> num_rows;
+	cout << endl;
 }
 
+//Ger from the command line the number of cols in the matrix
 void Matrix::set_user_cols()
 {
-	cout << "Enter the number of columns in the matrix: " << endl;
+	cout << "Enter the number of columns in the matrix: ";
 	cin >> num_cols;
+	cout << endl;
 }
 
 
+//Create the 2d matrix
+void Matrix::create_matrix()
+{
+	entries = new int*[num_rows];
+	for(int i = 0; i < num_rows; i++)
+		entries[i] = new int[num_cols];
+}
 
+//Fill the matrix with entries from the command line
+void Matrix::fill_matrix()
+{
+	for(int i = 0; i < num_rows; i++)
+	{
+		for(int j = 0; j < num_cols; j++)
+		{
+			cout << "Enter the entry at position " << i+1 << ", " << j+1 << ": ";
+			cin >> entries[i][j];
+			cout << endl;
+		}
+	}
+}
+
+
+//Return the private members num_rows and num_cols
 int Matrix::get_num_rows()
 {
 	return num_rows;

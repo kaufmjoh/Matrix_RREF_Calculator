@@ -33,8 +33,12 @@ int main()
 	main.set_user_cols();
 
 	cout << main.get_num_rows() << "\t" << main.get_num_cols() << endl;
+
+	main.create_matrix();
 	//Obtain matrix entries from the user
-	
+
+	main.fill_matrix();	
+	main.print_Matrix();
 	//Perform matrix operations until the matrix is in RREF
 	
 	//Output the RREF matrix to the terminal
