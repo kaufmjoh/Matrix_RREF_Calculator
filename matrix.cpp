@@ -74,6 +74,34 @@ void Matrix::fill_matrix()
 }
 
 
+//Determine if the matrix is in RREF form. Return T if yes, F if not.
+bool Matrix::terminal_state()
+{
+	int offset = 0;
+
+	for(int i = 0; i < num_rows; i++)
+	{
+		for(int j = 0; j < num_cols; j++)
+		{
+			if(entries[i][j] != 0 && entries[i][j] != 1) //All entries must be either 0 or 1
+				return false;
+
+			else if(entries[i][j] == 1)
+			{
+				if(i == 0)
+				{
+					offset = j;
+				}
+				else
+				{
+					if(j != offset+i)
+						return false;
+				}
+			}
+		}
+	}
+}
+
 //Return the private members num_rows and num_cols
 int Matrix::get_num_rows()
 {

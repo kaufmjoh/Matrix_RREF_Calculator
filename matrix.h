@@ -26,6 +26,10 @@ class Matrix
 		void create_matrix();		
 
 		void fill_matrix();
+
+		bool terminal_state();
+
+		void perform_row_operation();
 };
 
 

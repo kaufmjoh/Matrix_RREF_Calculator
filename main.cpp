@@ -34,14 +34,24 @@ int main()
 
 	cout << main.get_num_rows() << "\t" << main.get_num_cols() << endl;
 
+	//Create an empty 2d array of integers
 	main.create_matrix();
-	//Obtain matrix entries from the user
 
+
+	//Obtain matrix entries from the user
 	main.fill_matrix();	
 	main.print_Matrix();
+
+
 	//Perform matrix operations until the matrix is in RREF
-	
+	while(main.terminal_state == false)
+	{
+		main.peform_row_operation();
+	}	
+
 	//Output the RREF matrix to the terminal
+	cout << "The matrix is now in row reduced echelon form:" << endl;
+	main.print_Matrix();
 
 	return 0;
 }
