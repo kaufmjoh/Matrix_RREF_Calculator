@@ -3,6 +3,8 @@
 
 using namespace std;
 
+#include "./row.h"
+
 class Matrix
 {
 	private:
