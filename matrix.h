@@ -32,6 +32,8 @@ class Matrix
 		bool terminal_state();
 
 		void perform_row_operation();
+
+		void swap_rows(int, int);
 };
 
 

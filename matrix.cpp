@@ -113,7 +113,7 @@ bool Matrix::terminal_state()
 //Determine a row operation to perform, and call a corresponding function
 void Matrix::perform_row_operation()
 {
-	for(int = 0; i < num_rows; i++)
+	for(int i = 0; i < num_rows; i++)
 		for(int j = 0; j < num_cols; j++)
 			if(rows[i].entries[j] == 0 && rows[i].sorted == false)
 				for(int k = i+1; k < num_rows; k++)
@@ -127,7 +127,7 @@ void Matrix::perform_row_operation()
 }
 
 //Swap the rows provided by the arguments x and y
-void Matrix::swap_rows(x,y)
+void Matrix::swap_rows(int x, int y)
 {
 	int temp[num_cols];
 	for(int i = 0; i < num_cols; i++)
