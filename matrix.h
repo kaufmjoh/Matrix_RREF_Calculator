@@ -11,7 +11,7 @@ class Matrix
 		int num_rows;
 		int num_cols;
 
-		int** entries;
+		Row* rows;
 
 	public:
 		Matrix();

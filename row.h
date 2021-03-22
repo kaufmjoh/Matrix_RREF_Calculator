@@ -3,9 +3,9 @@
 
 struct Row
 {
-
+	int* entries;
 	
-
+	bool sorted;
 };
 
 

@@ -10,16 +10,16 @@ Matrix::Matrix()
 	num_rows = 0;
 	num_cols = 0;
 
-	entries = NULL;
+	rows = NULL;
 }
 
 //Destruct the matrix
 Matrix::~Matrix()
 {
 	for(int i = 0; i < num_rows; i++)
-		delete [] entries[i];
+		delete [] rows[i].entries;
 
-	delete [] entries;
+	delete [] rows;
 }
 
 //Print the matrix
@@ -29,7 +29,7 @@ void Matrix::print_Matrix()
 	{
 		cout << "[ ";
 		for (int j = 0; j < num_cols; j++)
-			cout << entries[i][j] << " ";
+			cout << rows[i].entries[j] << " ";
 		cout << "]" << endl;
 	}
 }
@@ -54,9 +54,12 @@ void Matrix::set_user_cols()
 //Create the 2d matrix
 void Matrix::create_matrix()
 {
-	entries = new int*[num_rows];
+	rows = new Row[num_rows];
 	for(int i = 0; i < num_rows; i++)
-		entries[i] = new int[num_cols];
+	{
+		rows[i].entries = new int[num_cols];
+		rows[i].sorted = false;
+	}
 }
 
 //Fill the matrix with entries from the command line
@@ -67,7 +70,7 @@ void Matrix::fill_matrix()
 		for(int j = 0; j < num_cols; j++)
 		{
 			cout << "Enter the entry at position " << i+1 << ", " << j+1 << ": ";
-			cin >> entries[i][j];
+			cin >> rows[i].entries[j];
 			cout << endl;
 		}
 	}
@@ -87,17 +90,17 @@ bool Matrix::terminal_state()
 
 		for(int j = 0; j < num_cols; j++)
 		{
-			if(entries[i][j] != 0 && entries[i][j] != 1) //All entries must be either 0 or 1
+			if(rows[i].entries[j] != 0 && rows[i].entries[j] != 1) //All entries must be either 0 or 1
 				return false;
 
-			else if(entries[i][j] == 1 && flag == false) //The first 1 in a row.
+			else if(rows[i].entries[j] == 1 && flag == false) //The first 1 in a row.
 			{
 				flag = true;
 
 				//Check column
 				for(int k = 0; k < num_rows; k++)
 				{
-					if(entries[k][j] == 1 && i != k)
+					if(rows[k].entries[j] == 1 && i != k)
 						return false;
 				}
 			}
@@ -106,6 +109,32 @@ bool Matrix::terminal_state()
 
 	return true;
 }
+/*
+//Determine a row operation to perform, and call a corresponding function
+void Matrix::perform_row_operation()
+{
+	int column = 0;
+
+	//Organize the rows so that the leftmost nonzero column has a nonzero entry in the top row, and repeat	
+	for(int k = 0; k < num_rows; k++)
+	{
+		for(int i = k; i < num_rows; i++)
+		{
+			if(entries[i][0] == 0)
+			{
+				for(int j = i; j < num_rows; j++)
+				{
+					if(entries[j][0] != 0)
+					{
+						swap_rows(i, j);
+					}
+				}
+
+			}
+		}
+	}
+}
+*/
 
 //Return the private members num_rows and num_cols
 int Matrix::get_num_rows()
