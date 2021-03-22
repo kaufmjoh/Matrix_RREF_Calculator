@@ -13,6 +13,11 @@ class Matrix
 
 		Row* rows;
 
+		bool sorted;
+
+		lowest_scaled_row;
+		leftmost_valid_column;
+
 	public:
 		Matrix();
 		~Matrix();
@@ -33,6 +38,7 @@ class Matrix
 
 		void perform_row_operation();
 
+		void sort_rows();
 		void swap_rows(int, int);
 };
 

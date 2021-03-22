@@ -11,6 +11,11 @@ Matrix::Matrix()
 	num_cols = 0;
 
 	rows = NULL;
+
+	lowest_scaled_rows = -1;
+	leftmost_valid_column = -1;
+
+	sorted = false;
 }
 
 //Destruct the matrix
@@ -113,6 +118,16 @@ bool Matrix::terminal_state()
 //Determine a row operation to perform, and call a corresponding function
 void Matrix::perform_row_operation()
 {
+	if(sorted == false)
+		sort_rows();
+	
+	scale_row();
+	validify_column();
+}
+
+//Sort the rows of the matrix
+void Matrix::sort_rows()
+{
 	for(int i = 0; i < num_rows; i++)
 		for(int j = 0; j < num_cols; j++)
 			if(rows[i].entries[j] == 0 && rows[i].sorted == false)
@@ -123,7 +138,12 @@ void Matrix::perform_row_operation()
 						break;
 					}
 			else if(rows[i].entries[j] != 0)
+			{
 				rows[i].sorted = true;
+				break;
+			}
+
+	sorted = true;
 }
 
 //Swap the rows provided by the arguments x and y
@@ -136,6 +156,42 @@ void Matrix::swap_rows(int x, int y)
 		rows[y].entries[i] = rows[x].entries[i];
 		rows[x].entries[i] = temp[i];
 	}
+
+	rows[x].sorted = true;
+}
+
+//scale a row so the first entry is 1
+void Matrix::scale_row()
+{
+	int scalar = 1;
+
+	for(int i = 0; i < num_cols; i++)
+		if(rows[lowest_scaled_row+1].entries[i] != 0 && rows[lowest_scaled_row+1].entries[i] != 1)
+		{
+			scalar = rows[lowest_scaled_row+1].entries[i];
+			for(int j = i; j < num_cols; j++)
+				rows[lowest_scaled_row+1].entries[i] = rows[lowest_scaled_row+1].entries[i] / scalar;
+			break;
+		}
+
+	lowest_scaled_row++;
+}
+
+//Replace a row with a linear combination of itself and other rows
+void Matrix::validify_column()
+{
+	int scalar = 0;
+
+	bool need_to_validify = false;
+
+	for(int i = lowest_scaled_row; i < num_rows; i++)
+	{
+		if(rows[i].entries[leftmost_valid_column+1] != 0)
+			need_to_validify = true;
+	}
+
+	if(need_to_validify == false)
+		lefmost_valid_column++;
 }
 
 //Return the private members num_rows and num_cols
