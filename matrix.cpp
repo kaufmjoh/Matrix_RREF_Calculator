@@ -109,32 +109,34 @@ bool Matrix::terminal_state()
 
 	return true;
 }
-/*
+
 //Determine a row operation to perform, and call a corresponding function
 void Matrix::perform_row_operation()
 {
-	int column = 0;
-
-	//Organize the rows so that the leftmost nonzero column has a nonzero entry in the top row, and repeat	
-	for(int k = 0; k < num_rows; k++)
-	{
-		for(int i = k; i < num_rows; i++)
-		{
-			if(entries[i][0] == 0)
-			{
-				for(int j = i; j < num_rows; j++)
-				{
-					if(entries[j][0] != 0)
+	for(int = 0; i < num_rows; i++)
+		for(int j = 0; j < num_cols; j++)
+			if(rows[i].entries[j] == 0 && rows[i].sorted == false)
+				for(int k = i+1; k < num_rows; k++)
+					if(rows[k].entries[j] != 0 && rows[k].sorted == false)
 					{
-						swap_rows(i, j);
+						swap_rows(i,k);
+						break;
 					}
-				}
+			else if(rows[i].entries[j] != 0)
+				rows[i].sorted = true;
+}
 
-			}
-		}
+//Swap the rows provided by the arguments x and y
+void Matrix::swap_rows(x,y)
+{
+	int temp[num_cols];
+	for(int i = 0; i < num_cols; i++)
+	{
+		temp[i] = rows[y].entries[i];
+		rows[y].entries[i] = rows[x].entries[i];
+		rows[x].entries[i] = temp[i];
 	}
 }
-*/
 
 //Return the private members num_rows and num_cols
 int Matrix::get_num_rows()
