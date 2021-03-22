@@ -12,8 +12,11 @@ Matrix::Matrix()
 
 	rows = NULL;
 
-	lowest_scaled_rows = -1;
+	lowest_scaled_row = -1;
+	scaled = false;
+
 	leftmost_valid_column = -1;
+	valid = false;
 
 	sorted = false;
 }
@@ -120,9 +123,12 @@ void Matrix::perform_row_operation()
 {
 	if(sorted == false)
 		sort_rows();
-	
-	scale_row();
-	validify_column();
+
+	while(scaled == false)	
+		prep_row_scale();
+
+	while(valid == false)
+		validify_column();
 }
 
 //Sort the rows of the matrix
@@ -161,37 +167,58 @@ void Matrix::swap_rows(int x, int y)
 }
 
 //scale a row so the first entry is 1
-void Matrix::scale_row()
+void Matrix::prep_row_scale()
 {
-	int scalar = 1;
-
 	for(int i = 0; i < num_cols; i++)
 		if(rows[lowest_scaled_row+1].entries[i] != 0 && rows[lowest_scaled_row+1].entries[i] != 1)
 		{
-			scalar = rows[lowest_scaled_row+1].entries[i];
-			for(int j = i; j < num_cols; j++)
-				rows[lowest_scaled_row+1].entries[i] = rows[lowest_scaled_row+1].entries[i] / scalar;
+			scale_row(lowest_scaled_row+1, rows[lowest_scaled_row+1].entries[i]);
 			break;
 		}
+		else if(rows[lowest_scaled_row+1].entries[i] == 1)
+			break;
 
 	lowest_scaled_row++;
+
+	if(lowest_scaled_row == num_rows)
+		scaled = true;
+}
+
+//Divide each entry in a row by the scalar
+void Matrix::scale_row(int row_num, int scalar)
+{
+	for(int i = 0; i < num_cols; i++)
+		rows[row_num].entries[i] = rows[row_num].entries[i] / scalar;
 }
 
 //Replace a row with a linear combination of itself and other rows
 void Matrix::validify_column()
 {
-	int scalar = 0;
-
-	bool need_to_validify = false;
-
-	for(int i = lowest_scaled_row; i < num_rows; i++)
+	for(int i = 0; i < num_rows; i++)
 	{
-		if(rows[i].entries[leftmost_valid_column+1] != 0)
-			need_to_validify = true;
+		if(rows[i].entries[leftmost_valid_column+1] == 1)
+		{
+			for(int j = i; j < num_rows; j++)
+			{
+				if(rows[j].entries[leftmost_valid_column+1] == 1)
+					subtract_row(i, j);
+			}
+		}
 	}
 
-	if(need_to_validify == false)
-		lefmost_valid_column++;
+	leftmost_valid_column++;
+
+	if(leftmost_valid_column == num_cols)
+		valid = true;
+}
+
+//Substract row x from row y
+void Matrix::subtract_row(int x, int y)
+{
+	for(int i = 0; i < num_cols; i++)
+	{
+		rows[y].entries[i] = rows[y].entries[i] - rows[x].entries[i];
+	}
 }
 
 //Return the private members num_rows and num_cols
@@ -204,11 +231,6 @@ int Matrix::get_num_cols()
 {
 	return num_cols;
 }
-
-
-
-
-
 
 
 

@@ -15,8 +15,12 @@ class Matrix
 
 		bool sorted;
 
-		lowest_scaled_row;
-		leftmost_valid_column;
+		int lowest_scaled_row;
+		bool scaled;
+
+
+		int leftmost_valid_column;
+		int valid;
 
 	public:
 		Matrix();
@@ -40,6 +44,12 @@ class Matrix
 
 		void sort_rows();
 		void swap_rows(int, int);
+
+		void prep_row_scale();
+		void scale_row(int, int);
+
+		void validify_column();
+		void subtract_row(int, int);
 };
 
 
