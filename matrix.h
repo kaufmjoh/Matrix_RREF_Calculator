@@ -20,7 +20,7 @@ class Matrix
 
 
 		int leftmost_valid_column;
-		int valid;
+		bool valid;
 
 	public:
 		Matrix();

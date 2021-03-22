@@ -65,7 +65,7 @@ void Matrix::create_matrix()
 	rows = new Row[num_rows];
 	for(int i = 0; i < num_rows; i++)
 	{
-		rows[i].entries = new int[num_cols];
+		rows[i].entries = new float[num_cols];
 		rows[i].sorted = false;
 	}
 }
@@ -155,7 +155,7 @@ void Matrix::sort_rows()
 //Swap the rows provided by the arguments x and y
 void Matrix::swap_rows(int x, int y)
 {
-	int temp[num_cols];
+	float temp[num_cols];
 	for(int i = 0; i < num_cols; i++)
 	{
 		temp[i] = rows[y].entries[i];
@@ -187,8 +187,12 @@ void Matrix::prep_row_scale()
 //Divide each entry in a row by the scalar
 void Matrix::scale_row(int row_num, int scalar)
 {
+	cout << "scaling row number: " << row_num << " by: " << scalar << endl;
+
 	for(int i = 0; i < num_cols; i++)
 		rows[row_num].entries[i] = rows[row_num].entries[i] / scalar;
+
+	print_Matrix();
 }
 
 //Replace a row with a linear combination of itself and other rows

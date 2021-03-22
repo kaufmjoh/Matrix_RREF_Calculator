@@ -3,7 +3,7 @@
 
 struct Row
 {
-	int* entries;
+	float* entries;
 	
 	bool sorted;
 };
