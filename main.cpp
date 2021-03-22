@@ -42,13 +42,15 @@ int main()
 	main.fill_matrix();	
 	main.print_Matrix();
 
+	cout << "result:";
+	cout << main.terminal_state() << endl;
 
 	//Perform matrix operations until the matrix is in RREF
-	while(main.terminal_state == false)
+/*	while(main.terminal_state == false)
 	{
 		main.peform_row_operation();
 	}	
-
+*/
 	//Output the RREF matrix to the terminal
 	cout << "The matrix is now in row reduced echelon form:" << endl;
 	main.print_Matrix();

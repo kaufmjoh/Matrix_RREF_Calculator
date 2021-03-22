@@ -78,28 +78,33 @@ void Matrix::fill_matrix()
 bool Matrix::terminal_state()
 {
 	int offset = 0;
+	bool flag = false;
 
+	//Any way to reduce complexity below n^3?
 	for(int i = 0; i < num_rows; i++)
 	{
+		flag = false;
+
 		for(int j = 0; j < num_cols; j++)
 		{
 			if(entries[i][j] != 0 && entries[i][j] != 1) //All entries must be either 0 or 1
 				return false;
 
-			else if(entries[i][j] == 1)
+			else if(entries[i][j] == 1 && flag == false) //The first 1 in a row.
 			{
-				if(i == 0)
+				flag = true;
+
+				//Check column
+				for(int k = 0; k < num_rows; k++)
 				{
-					offset = j;
-				}
-				else
-				{
-					if(j != offset+i)
+					if(entries[k][j] == 1 && i != k)
 						return false;
 				}
 			}
 		}
 	}
+
+	return true;
 }
 
 //Return the private members num_rows and num_cols
