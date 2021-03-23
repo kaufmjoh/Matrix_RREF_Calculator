@@ -14,12 +14,13 @@ Matrix::Matrix()
 	rows = NULL;
 
 	lowest_scaled_row = -1;
-	scaled = false;
-
 	leftmost_valid_column = -1;
+	
+	highest_scaled_row = -1;
+	rightmost_valid_column = -1;
+
 	valid = false;
 
-	sorted = false;
 }
 
 //Destruct the matrix
@@ -51,6 +52,8 @@ void Matrix::set_user_rows()
 	cout << "Enter the number of rows in the matrix: ";
 	cin >> num_rows;
 	cout << endl;
+
+	highest_scaled_row = num_rows;
 }
 
 //Ger from the command line the number of cols in the matrix
@@ -59,6 +62,8 @@ void Matrix::set_user_cols()
 	cout << "Enter the number of columns in the matrix: ";
 	cin >> num_cols;
 	cout << endl;
+
+	rightmost_valid_column = num_cols;
 }
 
 
@@ -69,7 +74,6 @@ void Matrix::create_matrix()
 	for(int i = 0; i < num_rows; i++)
 	{
 		rows[i].entries = new float[num_cols];
-		rows[i].sorted = false;
 	}
 }
 
@@ -135,7 +139,15 @@ void Matrix::perform_row_operation()
 	}
 	//The matrix is now in row-echelon form (not row reduced echelon form)
 
-	
+	cout << "The matrix is now in row-echelon form: " << endl;
+	print_Matrix();
+	valid = false;
+
+	while(valid == false)
+	{
+		print_Matrix();
+		validify_column(rightmost_valid_column, highest_scaled_row, 1);
+	}	
 }
 
 //Sort the rows of the matrix
@@ -163,7 +175,6 @@ void Matrix::swap_rows(int x, int y)
 		rows[x].entries[i] = temp[i];
 	}
 
-	rows[x].sorted = true;
 }
 
 //Scale the highest row where the leading entry is not 1
@@ -186,6 +197,7 @@ void Matrix::scale_row(int row_num)
 //Replace a row with a linear combination of itself and other rows
 void Matrix::validify_column(int col_num, int row_num, int direction)
 {
+
 	if(direction == 0)
 	{
 		for(int i = row_num+1; i < num_rows; i++)
@@ -193,10 +205,27 @@ void Matrix::validify_column(int col_num, int row_num, int direction)
 			if(rows[i].entries[col_num] != 0)
 				subtract_row(rows[i].entries[col_num], row_num, i);
 		}
+	
+
+		if(row_num+1 == num_rows)
+			valid = true;
 	}
 
-	if(row_num+1 == num_rows)
-		valid = true;
+	else
+	{
+		for(int i = row_num-2; i >= 0; i--)
+		{
+			if(rows[i].entries[col_num-1] != 0)
+				subtract_row(rows[i].entries[col_num-1], row_num-1, i);
+		}
+
+		highest_scaled_row--;
+		rightmost_valid_column--;
+
+
+		if(highest_scaled_row == 0)
+			valid = true;
+	}
 }
 
 //Substract row x scale times from row y
