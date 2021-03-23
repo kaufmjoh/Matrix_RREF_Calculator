@@ -198,6 +198,8 @@ void Matrix::scale_row(int row_num)
 void Matrix::validify_column(int col_num, int row_num, int direction)
 {
 
+	cout << "validifying column: " << col_num << " about row: " << row_num << " in the direction: " << direction << endl;
+
 	if(direction == 0)
 	{
 		for(int i = row_num+1; i < num_rows; i++)
@@ -211,20 +213,57 @@ void Matrix::validify_column(int col_num, int row_num, int direction)
 			valid = true;
 	}
 
+
 	else
 	{
-		for(int i = row_num-2; i >= 0; i--)
+		bool flag1 = false;
+		bool flag2 = false;
+		//If everything goes south, remove from here
+//		if(rows[row_num-1].entries[col_num-1] == 0)
+//		{
+			for(int i = row_num-1; i >=0; i--)
+			{
+				for(int j = 0; j < num_cols; j++)
+				{
+					if(rows[i].entries[j] != 0)
+					{
+						cout << "index: " << i << " " << j << "is 1st nonzero" << endl;
+
+						highest_scaled_row = i+1;
+						rightmost_valid_column = j+1;
+
+						if(highest_scaled_row != row_num || rightmost_valid_column != col_num)
+						{
+							cout << "row num is: " << row_num << " hsr: " << highest_scaled_row << " col num: " <<col_num<<" rvc: " << rightmost_valid_column << endl;
+							flag2 = true;
+						}
+						flag1 = true;	
+						break;
+					}
+				}
+				if(flag1)
+					break;
+			}
+
+//		}
+
+		if(!flag2)
 		{
-			if(rows[i].entries[col_num-1] != 0)
-				subtract_row(rows[i].entries[col_num-1], row_num-1, i);
+			//To here
+
+			for(int i = row_num-2; i >= 0; i--)
+			{
+				if(rows[i].entries[col_num-1] != 0)
+					subtract_row(rows[i].entries[col_num-1], row_num-1, i);
+			}
+
+			highest_scaled_row--;
+			rightmost_valid_column--;
+
+
+			if(highest_scaled_row == 0)
+				valid = true;
 		}
-
-		highest_scaled_row--;
-		rightmost_valid_column--;
-
-
-		if(highest_scaled_row == 0)
-			valid = true;
 	}
 }
 
