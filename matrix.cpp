@@ -128,6 +128,7 @@ bool Matrix::terminal_state()
 //Determine a row operation to perform, and call a corresponding function
 void Matrix::perform_row_operation()
 {
+	//Perform row operations until the matrix is in row-echelon form
 	while(valid == false)
 	{	
 		print_Matrix();
@@ -135,7 +136,7 @@ void Matrix::perform_row_operation()
 		print_Matrix();
 		scale_row(lowest_scaled_row);
 		print_Matrix();
-		validify_column(leftmost_valid_column, lowest_scaled_row, 0);
+		validate_column_down(leftmost_valid_column, lowest_scaled_row);
 	}
 	//The matrix is now in row-echelon form (not row reduced echelon form)
 
@@ -143,10 +144,11 @@ void Matrix::perform_row_operation()
 	print_Matrix();
 	valid = false;
 
+	//Perform row operations until the matrix is in row-reduced echelon form	
 	while(valid == false)
 	{
 		print_Matrix();
-		validify_column(rightmost_valid_column, highest_scaled_row, 1);
+		validate_column_up(rightmost_valid_column, highest_scaled_row);
 	}	
 }
 
@@ -195,75 +197,65 @@ void Matrix::scale_row(int row_num)
 
 
 //Replace a row with a linear combination of itself and other rows
-void Matrix::validify_column(int col_num, int row_num, int direction)
+void Matrix::validate_column_down(int col_num, int row_num)
 {
 
-	cout << "validifying column: " << col_num << " about row: " << row_num << " in the direction: " << direction << endl;
-
-	if(direction == 0)
+	for(int i = row_num+1; i < num_rows; i++)
 	{
-		for(int i = row_num+1; i < num_rows; i++)
-		{
-			if(rows[i].entries[col_num] != 0)
-				subtract_row(rows[i].entries[col_num], row_num, i);
-		}
-	
-
-		if(row_num+1 == num_rows)
-			valid = true;
+		if(rows[i].entries[col_num] != 0)
+			subtract_row(rows[i].entries[col_num], row_num, i);
 	}
 
 
-	else
+	if(row_num+1 == num_rows)
+		valid = true;
+}
+
+
+void Matrix::validate_column_up(int col_num, int row_num)
+{
+	bool flag1 = false;
+	bool flag2 = false;
+	for(int i = row_num-1; i >=0; i--)
 	{
-		bool flag1 = false;
-		bool flag2 = false;
-		//If everything goes south, remove from here
-//		if(rows[row_num-1].entries[col_num-1] == 0)
-//		{
-			for(int i = row_num-1; i >=0; i--)
-			{
-				for(int j = 0; j < num_cols; j++)
-				{
-					if(rows[i].entries[j] != 0)
-					{
-						cout << "index: " << i << " " << j << "is 1st nonzero" << endl;
-
-						highest_scaled_row = i+1;
-						rightmost_valid_column = j+1;
-
-						if(highest_scaled_row != row_num || rightmost_valid_column != col_num)
-						{
-							cout << "row num is: " << row_num << " hsr: " << highest_scaled_row << " col num: " <<col_num<<" rvc: " << rightmost_valid_column << endl;
-							flag2 = true;
-						}
-						flag1 = true;	
-						break;
-					}
-				}
-				if(flag1)
-					break;
-			}
-
-//		}
-
-		if(!flag2)
+		for(int j = 0; j < num_cols; j++)
 		{
-			//To here
-
-			for(int i = row_num-2; i >= 0; i--)
+			if(rows[i].entries[j] != 0)
 			{
-				if(rows[i].entries[col_num-1] != 0)
-					subtract_row(rows[i].entries[col_num-1], row_num-1, i);
+				cout << "index: " << i << " " << j << "is 1st nonzero" << endl;
+
+				highest_scaled_row = i+1;
+				rightmost_valid_column = j+1;
+
+				if(highest_scaled_row != row_num || rightmost_valid_column != col_num)
+				{
+					cout << "row num is: " << row_num << " hsr: " << highest_scaled_row << " col num: " <<col_num<<" rvc: " << rightmost_valid_column << endl;
+					flag2 = true;
+				}
+				flag1 = true;	
+				break;
 			}
-
-			highest_scaled_row--;
-			rightmost_valid_column--;
-
-
-			if(highest_scaled_row == 0)
-				valid = true;
 		}
+		if(flag1)
+			break;
+	}
+
+
+	if(!flag2)
+	{
+
+		for(int i = row_num-2; i >= 0; i--)
+		{
+			if(rows[i].entries[col_num-1] != 0)
+				subtract_row(rows[i].entries[col_num-1], row_num-1, i);
+		}
+
+		highest_scaled_row--;
+		rightmost_valid_column--;
+
+
+		if(highest_scaled_row == 0)
+			valid = true;
 	}
 }
 
