@@ -13,11 +13,8 @@ class Matrix
 
 		Row* rows;
 
-		int lowest_scaled_row;
-		int leftmost_valid_column;
-
-		int highest_scaled_row;
-		int rightmost_valid_column;	
+		int working_row_index;
+		int working_column_index;
 	
 		bool valid;
 

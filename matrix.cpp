@@ -13,12 +13,9 @@ Matrix::Matrix()
 
 	rows = NULL;
 
-	lowest_scaled_row = -1;
-	leftmost_valid_column = -1;
+	working_row_index = -1;
+	working_column_index = -1;
 	
-	highest_scaled_row = -1;
-	rightmost_valid_column = -1;
-
 	valid = false;
 
 }
@@ -53,7 +50,6 @@ void Matrix::set_user_rows()
 	cin >> num_rows;
 	cout << endl;
 
-	highest_scaled_row = num_rows;
 }
 
 //Ger from the command line the number of cols in the matrix
@@ -63,7 +59,6 @@ void Matrix::set_user_cols()
 	cin >> num_cols;
 	cout << endl;
 
-	rightmost_valid_column = num_cols;
 }
 
 
@@ -134,9 +129,9 @@ void Matrix::perform_row_operation()
 		print_Matrix();
 		sort_rows();
 		print_Matrix();
-		scale_row(lowest_scaled_row);
+		scale_row(working_row_index);
 		print_Matrix();
-		validate_column_down(leftmost_valid_column, lowest_scaled_row);
+		validate_column_down(working_column_index, working_row_index);
 	}
 	//The matrix is now in row-echelon form (not row reduced echelon form)
 
@@ -144,11 +139,14 @@ void Matrix::perform_row_operation()
 	print_Matrix();
 	valid = false;
 
+	working_column_index = num_cols;
+	working_row_index = num_rows;
+
 	//Perform row operations until the matrix is in row-reduced echelon form	
 	while(valid == false)
 	{
 		print_Matrix();
-		validate_column_up(rightmost_valid_column, highest_scaled_row);
+		validate_column_up(working_column_index, working_row_index);
 	}	
 }
 
@@ -157,13 +155,13 @@ void Matrix::sort_rows()
 {
 	bool break_flag = false;
 
-	if(rows[lowest_scaled_row+1].entries[leftmost_valid_column+1] == 0)
-		for(int j = leftmost_valid_column+1; j < num_cols; j++)
+	if(rows[working_row_index+1].entries[working_column_index+1] == 0)
+		for(int j = working_column_index+1; j < num_cols; j++)
 		{
-			for(int i = lowest_scaled_row+1; i < num_rows; i++)
+			for(int i = working_row_index+1; i < num_rows; i++)
 				if(rows[i].entries[j] != 0)
 				{
-					swap_rows(lowest_scaled_row+1, i);
+					swap_rows(working_row_index+1, i);
 					break_flag = true;
 				}
 			if(break_flag)
@@ -171,8 +169,8 @@ void Matrix::sort_rows()
 		}
 
 
-	lowest_scaled_row++;
-	leftmost_valid_column++;
+	working_row_index++;
+	working_column_index++;
 }
 
 //Swap the rows provided by the arguments x and y
@@ -235,12 +233,12 @@ void Matrix::validate_column_up(int col_num, int row_num)
 			{
 				cout << "index: " << i << " " << j << "is 1st nonzero" << endl;
 
-				highest_scaled_row = i+1;
-				rightmost_valid_column = j+1;
+				working_row_index = i+1;
+				working_column_index = j+1;
 
-				if(highest_scaled_row != row_num || rightmost_valid_column != col_num)
+				if(working_row_index != row_num || working_column_index != col_num)
 				{
-					cout << "row num is: " << row_num << " hsr: " << highest_scaled_row << " col num: " <<col_num<<" rvc: " << rightmost_valid_column << endl;
+//			cout << "row num is: " << row_num << " hsr: " << highest_scaled_row << " col num: " <<col_num<<" rvc: " << rightmost_valid_column << endl;
 					flag2 = true;
 				}
 				flag1 = true;	
@@ -261,11 +259,11 @@ void Matrix::validate_column_up(int col_num, int row_num)
 				subtract_row(rows[i].entries[col_num-1], row_num-1, i);
 		}
 
-		highest_scaled_row--;
-		rightmost_valid_column--;
+		working_row_index--;
+		working_column_index--;
 
 
-		if(highest_scaled_row == 0)
+		if(working_row_index == 0)
 			valid = true;
 	}
 }
