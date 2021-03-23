@@ -155,10 +155,21 @@ void Matrix::perform_row_operation()
 //Sort the rows of the matrix
 void Matrix::sort_rows()
 {
+	bool break_flag = false;
+
 	if(rows[lowest_scaled_row+1].entries[leftmost_valid_column+1] == 0)
-		for(int i = lowest_scaled_row+2; i < num_rows; i++)
-			if(rows[i].entries[leftmost_valid_column+1] != 0)
-				swap_rows(lowest_scaled_row+1, i);
+		for(int j = leftmost_valid_column+1; j < num_cols; j++)
+		{
+			for(int i = lowest_scaled_row+1; i < num_rows; i++)
+				if(rows[i].entries[j] != 0)
+				{
+					swap_rows(lowest_scaled_row+1, i);
+					break_flag = true;
+				}
+			if(break_flag)
+				break;
+		}
+
 
 	lowest_scaled_row++;
 	leftmost_valid_column++;
@@ -196,7 +207,7 @@ void Matrix::scale_row(int row_num)
 }
 
 
-//Replace a row with a linear combination of itself and other rows
+//Ensure all rows below row_num in column col_num have 0's.
 void Matrix::validate_column_down(int col_num, int row_num)
 {
 
@@ -211,7 +222,7 @@ void Matrix::validate_column_down(int col_num, int row_num)
 		valid = true;
 }
 
-
+//Ensure all rows above row_num in the column col_num have 0's.
 void Matrix::validate_column_up(int col_num, int row_num)
 {
 	bool flag1 = false;
