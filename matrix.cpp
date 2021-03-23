@@ -79,7 +79,7 @@ void Matrix::fill_matrix()
 	{
 		for(int j = 0; j < num_cols; j++)
 		{
-			cout << "Enter the entry at position " << i+1 << ", " << j+1 << ": ";
+			cout << "Enter the entry at position row: " << i+1 << ", column: " << j+1 << ": ";
 			cin >> rows[i].entries[j];
 			cout << endl;
 		}
@@ -126,11 +126,8 @@ void Matrix::perform_row_operation()
 	//Perform row operations until the matrix is in row-echelon form
 	while(valid == false)
 	{	
-		print_Matrix();
 		sort_rows();
-		print_Matrix();
 		scale_row(working_row_index);
-		print_Matrix();
 		validate_column_down(working_column_index, working_row_index);
 	}
 	//The matrix is now in row-echelon form (not row reduced echelon form)
@@ -145,7 +142,6 @@ void Matrix::perform_row_operation()
 	//Perform row operations until the matrix is in row-reduced echelon form	
 	while(valid == false)
 	{
-		print_Matrix();
 		validate_column_up(working_column_index, working_row_index);
 	}	
 }
@@ -176,8 +172,6 @@ void Matrix::sort_rows()
 //Swap the rows provided by the arguments x and y
 void Matrix::swap_rows(int x, int y)
 {
-	cout << "swapping rows:" << x << " and " << y << endl;
-
 	float temp[num_cols];
 	for(int i = 0; i < num_cols; i++)
 	{
@@ -197,7 +191,6 @@ void Matrix::scale_row(int row_num)
 		if(rows[row_num].entries[i] != 0 && scalar == 0)
 		{
 			scalar = rows[row_num].entries[i];
-			cout << "scalar is: " << scalar << endl;
 		}
 		if(scalar != 0)
 			rows[row_num].entries[i] = rows[row_num].entries[i] / scalar;
@@ -223,34 +216,33 @@ void Matrix::validate_column_down(int col_num, int row_num)
 //Ensure all rows above row_num in the column col_num have 0's.
 void Matrix::validate_column_up(int col_num, int row_num)
 {
-	bool flag1 = false;
-	bool flag2 = false;
+	bool break_flag = false;
+	bool wrong_index_flag = false;
+
 	for(int i = row_num-1; i >=0; i--)
 	{
 		for(int j = 0; j < num_cols; j++)
 		{
 			if(rows[i].entries[j] != 0)
 			{
-				cout << "index: " << i << " " << j << "is 1st nonzero" << endl;
 
 				working_row_index = i+1;
 				working_column_index = j+1;
 
 				if(working_row_index != row_num || working_column_index != col_num)
 				{
-//			cout << "row num is: " << row_num << " hsr: " << highest_scaled_row << " col num: " <<col_num<<" rvc: " << rightmost_valid_column << endl;
-					flag2 = true;
+					wrong_index_flag = true;
 				}
-				flag1 = true;	
+				break_flag = true;	
 				break;
 			}
 		}
-		if(flag1)
+		if(break_flag == true)
 			break;
 	}
 
 
-	if(!flag2)
+	if(wrong_index_flag == false)
 	{
 
 		for(int i = row_num-2; i >= 0; i--)

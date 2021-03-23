@@ -32,18 +32,16 @@ int main()
 	main.set_user_rows();
 	main.set_user_cols();
 
-	cout << main.get_num_rows() << "\t" << main.get_num_cols() << endl;
 
 	//Create an empty 2d array of integers
 	main.create_matrix();
 
 
 	//Obtain matrix entries from the user
-	main.fill_matrix();	
-	main.print_Matrix();
+	main.fill_matrix();
 
-	cout << "result:";
-	cout << main.terminal_state() << endl;
+	cout << "You entered the matrix:" << endl;	
+	main.print_Matrix();
 
 	//Perform matrix operations until the matrix is in RREF
 	main.perform_row_operation();
