@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 
 #include "./matrix.h"
 
@@ -33,13 +34,15 @@ Matrix::~Matrix()
 //Print the matrix
 void Matrix::print_Matrix()
 {
+	cout << endl;
 	for(int i = 0; i < num_rows; i++)
 	{
 		cout << "[ ";
 		for (int j = 0; j < num_cols; j++)
-			cout << rows[i].entries[j] << " ";
+			cout << fixed << setprecision(3) << rows[i].entries[j] << " ";
 		cout << "]" << endl;
 	}
+	cout << endl;
 }
 
 //Get from the command line the number of rows in the matrix
@@ -124,11 +127,14 @@ void Matrix::perform_row_operation()
 	if(sorted == false)
 		sort_rows();
 
-	while(scaled == false)	
-		prep_row_scale();
 
 	while(valid == false)
+	{	
+		print_Matrix();
+		scale_row();
+		print_Matrix();
 		validify_column();
+	}
 }
 
 //Sort the rows of the matrix
@@ -166,63 +172,49 @@ void Matrix::swap_rows(int x, int y)
 	rows[x].sorted = true;
 }
 
-//scale a row so the first entry is 1
-void Matrix::prep_row_scale()
+//Scale the highest row where the leading entry is not 1
+void Matrix::scale_row()
 {
+	cout << "lowest scaled row is: " << lowest_scaled_row << endl;
+
+	float scalar = 0;
 	for(int i = 0; i < num_cols; i++)
-		if(rows[lowest_scaled_row+1].entries[i] != 0 && rows[lowest_scaled_row+1].entries[i] != 1)
+	{
+		if(rows[lowest_scaled_row+1].entries[i] != 0 && scalar == 0)
 		{
-			scale_row(lowest_scaled_row+1, rows[lowest_scaled_row+1].entries[i]);
-			break;
+			scalar = rows[lowest_scaled_row+1].entries[i];
+			cout << "scalar is: " << scalar << endl;
 		}
-		else if(rows[lowest_scaled_row+1].entries[i] == 1)
-			break;
+		if(scalar != 0)
+			rows[lowest_scaled_row+1].entries[i] = rows[lowest_scaled_row+1].entries[i] / scalar;
+	}
 
 	lowest_scaled_row++;
-
-	if(lowest_scaled_row == num_rows)
-		scaled = true;
 }
 
-//Divide each entry in a row by the scalar
-void Matrix::scale_row(int row_num, int scalar)
-{
-	cout << "scaling row number: " << row_num << " by: " << scalar << endl;
-
-	for(int i = 0; i < num_cols; i++)
-		rows[row_num].entries[i] = rows[row_num].entries[i] / scalar;
-
-	print_Matrix();
-}
 
 //Replace a row with a linear combination of itself and other rows
 void Matrix::validify_column()
 {
-	for(int i = 0; i < num_rows; i++)
+	for(int i = lowest_scaled_row+1; i < num_rows; i++)
 	{
-		if(rows[i].entries[leftmost_valid_column+1] == 1)
-		{
-			for(int j = i; j < num_rows; j++)
-			{
-				if(rows[j].entries[leftmost_valid_column+1] == 1)
-					subtract_row(i, j);
-			}
-		}
+		if(rows[i].entries[leftmost_valid_column+1] != 0)
+			subtract_row(rows[i].entries[leftmost_valid_column+1], lowest_scaled_row, i); 
 	}
 
 	leftmost_valid_column++;
-
 	if(leftmost_valid_column == num_cols)
 		valid = true;
 }
 
-//Substract row x from row y
-void Matrix::subtract_row(int x, int y)
+//Substract row x scale times from row y
+void Matrix::subtract_row(int scale, int x, int y)
 {
 	for(int i = 0; i < num_cols; i++)
 	{
-		rows[y].entries[i] = rows[y].entries[i] - rows[x].entries[i];
+		rows[y].entries[i] = rows[y].entries[i] - scale * rows[x].entries[i];
 	}
+
 }
 
 //Return the private members num_rows and num_cols

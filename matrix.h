@@ -46,10 +46,10 @@ class Matrix
 		void swap_rows(int, int);
 
 		void prep_row_scale();
-		void scale_row(int, int);
+		void scale_row();
 
 		void validify_column();
-		void subtract_row(int, int);
+		void subtract_row(int, int, int);
 };
 
 
