@@ -196,19 +196,20 @@ void Matrix::scale_row()
 //Replace a row with a linear combination of itself and other rows
 void Matrix::validify_column()
 {
-	for(int i = lowest_scaled_row+1; i < num_rows; i++)
+	for(int i = 0; i < num_rows; i++)
 	{
-		if(rows[i].entries[leftmost_valid_column+1] != 0)
+		if(rows[i].entries[leftmost_valid_column+1] != 0 && i != lowest_scaled_row)
 			subtract_row(rows[i].entries[leftmost_valid_column+1], lowest_scaled_row, i); 
 	}
 
 	leftmost_valid_column++;
-	if(leftmost_valid_column == num_cols)
+
+	if(leftmost_valid_column+1 == num_cols)
 		valid = true;
 }
 
 //Substract row x scale times from row y
-void Matrix::subtract_row(int scale, int x, int y)
+void Matrix::subtract_row(float scale, int x, int y)
 {
 	for(int i = 0; i < num_cols; i++)
 	{

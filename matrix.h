@@ -49,7 +49,7 @@ class Matrix
 		void scale_row();
 
 		void validify_column();
-		void subtract_row(int, int, int);
+		void subtract_row(float, int, int);
 };
 
 
