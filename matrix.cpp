@@ -16,7 +16,7 @@ Matrix::Matrix()
 	lowest_scaled_row = -1;
 	scaled = false;
 
-	rightmost_valid_column = -1;
+	leftmost_valid_column = -1;
 	valid = false;
 
 	sorted = false;
@@ -124,44 +124,37 @@ bool Matrix::terminal_state()
 //Determine a row operation to perform, and call a corresponding function
 void Matrix::perform_row_operation()
 {
-	if(sorted == false)
-		sort_rows();
-
-	//The matrix is now in row-echelon form (not row reduced echelon form)
-
 	while(valid == false)
 	{	
 		print_Matrix();
-		scale_row();
+		sort_rows();
 		print_Matrix();
-		validify_column();
+		scale_row(lowest_scaled_row);
+		print_Matrix();
+		validify_column(leftmost_valid_column, lowest_scaled_row, 0);
 	}
+	//The matrix is now in row-echelon form (not row reduced echelon form)
+
+	
 }
 
 //Sort the rows of the matrix
 void Matrix::sort_rows()
 {
-	for(int i = 0; i < num_rows; i++)
-		for(int j = 0; j < num_cols; j++)
-			if(rows[i].entries[j] == 0 && rows[i].sorted == false)
-				for(int k = i+1; k < num_rows; k++)
-					if(rows[k].entries[j] != 0 && rows[k].sorted == false)
-					{
-						swap_rows(i,k);
-						break;
-					}
-			else if(rows[i].entries[j] != 0)
-			{
-				rows[i].sorted = true;
-				break;
-			}
+	if(rows[lowest_scaled_row+1].entries[leftmost_valid_column+1] == 0)
+		for(int i = lowest_scaled_row+2; i < num_rows; i++)
+			if(rows[i].entries[leftmost_valid_column+1] != 0)
+				swap_rows(lowest_scaled_row+1, i);
 
-	sorted = true;
+	lowest_scaled_row++;
+	leftmost_valid_column++;
 }
 
 //Swap the rows provided by the arguments x and y
 void Matrix::swap_rows(int x, int y)
 {
+	cout << "swapping rows:" << x << " and " << y << endl;
+
 	float temp[num_cols];
 	for(int i = 0; i < num_cols; i++)
 	{
@@ -174,38 +167,35 @@ void Matrix::swap_rows(int x, int y)
 }
 
 //Scale the highest row where the leading entry is not 1
-void Matrix::scale_row()
+void Matrix::scale_row(int row_num)
 {
-	cout << "lowest scaled row is: " << lowest_scaled_row << endl;
-
 	float scalar = 0;
 	for(int i = 0; i < num_cols; i++)
 	{
-		if(rows[lowest_scaled_row+1].entries[i] != 0 && scalar == 0)
+		if(rows[row_num].entries[i] != 0 && scalar == 0)
 		{
-			scalar = rows[lowest_scaled_row+1].entries[i];
+			scalar = rows[row_num].entries[i];
 			cout << "scalar is: " << scalar << endl;
 		}
 		if(scalar != 0)
-			rows[lowest_scaled_row+1].entries[i] = rows[lowest_scaled_row+1].entries[i] / scalar;
+			rows[row_num].entries[i] = rows[row_num].entries[i] / scalar;
 	}
-
-	lowest_scaled_row++;
 }
 
 
 //Replace a row with a linear combination of itself and other rows
-void Matrix::validify_column()
+void Matrix::validify_column(int col_num, int row_num, int direction)
 {
-	for(int i = 0; i < num_rows; i++)
+	if(direction == 0)
 	{
-		if(rows[i].entries[rightmost_valid_column+1] != 0 && i != lowest_scaled_row)
-			subtract_row(rows[i].entries[rightmost_valid_column+1], lowest_scaled_row, i); 
+		for(int i = row_num+1; i < num_rows; i++)
+		{
+			if(rows[i].entries[col_num] != 0)
+				subtract_row(rows[i].entries[col_num], row_num, i);
+		}
 	}
 
-	rightmost_valid_column++;
-
-	if(rightmost_valid_column+1 == num_cols)
+	if(row_num+1 == num_rows)
 		valid = true;
 }
 

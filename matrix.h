@@ -19,7 +19,7 @@ class Matrix
 		bool scaled;
 
 
-		int rightmost_valid_column;
+		int leftmost_valid_column;
 		bool valid;
 
 	public:
@@ -46,9 +46,9 @@ class Matrix
 		void swap_rows(int, int);
 
 		void prep_row_scale();
-		void scale_row();
+		void scale_row(int);
 
-		void validify_column();
+		void validify_column(int, int, int);
 		void subtract_row(float, int, int);
 };
 
