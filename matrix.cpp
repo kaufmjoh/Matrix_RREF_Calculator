@@ -16,7 +16,7 @@ Matrix::Matrix()
 	lowest_scaled_row = -1;
 	scaled = false;
 
-	leftmost_valid_column = -1;
+	rightmost_valid_column = -1;
 	valid = false;
 
 	sorted = false;
@@ -127,6 +127,7 @@ void Matrix::perform_row_operation()
 	if(sorted == false)
 		sort_rows();
 
+	//The matrix is now in row-echelon form (not row reduced echelon form)
 
 	while(valid == false)
 	{	
@@ -198,13 +199,13 @@ void Matrix::validify_column()
 {
 	for(int i = 0; i < num_rows; i++)
 	{
-		if(rows[i].entries[leftmost_valid_column+1] != 0 && i != lowest_scaled_row)
-			subtract_row(rows[i].entries[leftmost_valid_column+1], lowest_scaled_row, i); 
+		if(rows[i].entries[rightmost_valid_column+1] != 0 && i != lowest_scaled_row)
+			subtract_row(rows[i].entries[rightmost_valid_column+1], lowest_scaled_row, i); 
 	}
 
-	leftmost_valid_column++;
+	rightmost_valid_column++;
 
-	if(leftmost_valid_column+1 == num_cols)
+	if(rightmost_valid_column+1 == num_cols)
 		valid = true;
 }
 

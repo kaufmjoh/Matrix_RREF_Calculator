@@ -19,7 +19,7 @@ class Matrix
 		bool scaled;
 
 
-		int leftmost_valid_column;
+		int rightmost_valid_column;
 		bool valid;
 
 	public:
