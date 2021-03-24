@@ -25,7 +25,7 @@ using namespace std;
 //The driving function for the whole program.
 int main()
 {
-	//Variables
+	//The instance of the matrix class the program will operate on.
 	Matrix main;
 
 	//Obtain matrix dimensions from the user
@@ -33,7 +33,7 @@ int main()
 	main.set_user_cols();
 
 
-	//Create an empty 2d array of integers
+	//Create an empty 2d array of floats
 	main.create_matrix();
 
 
