@@ -3,15 +3,13 @@
 
 using namespace std;
 
-#include "./row.h"
-
 class Matrix
 {
 	private:
 		int num_rows;
 		int num_cols;
 
-		Row* rows;
+		float** entries;
 
 		int working_row_index;
 		int working_column_index;
@@ -34,8 +32,6 @@ class Matrix
 
 		void fill_matrix();
 
-		bool terminal_state();
-
 		void perform_row_operation();
 
 		void sort_rows();
@@ -45,6 +41,8 @@ class Matrix
 		void scale_row(int);
 
 		void validate_column_down(int, int);
+	
+		void determine_indices();
 		void validate_column_up(int, int);
 		void subtract_row(float, int, int);
 };

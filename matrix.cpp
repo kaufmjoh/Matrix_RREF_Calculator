@@ -11,7 +11,7 @@ Matrix::Matrix()
 	num_rows = 0;
 	num_cols = 0;
 
-	rows = NULL;
+	entries = NULL;
 
 	working_row_index = -1;
 	working_column_index = -1;
@@ -20,13 +20,13 @@ Matrix::Matrix()
 
 }
 
-//Destruct the matrix
+//Deconstruct the matrix
 Matrix::~Matrix()
 {
 	for(int i = 0; i < num_rows; i++)
-		delete [] rows[i].entries;
+		delete [] entries[i];
 
-	delete [] rows;
+	delete [] entries;
 }
 
 //Print the matrix
@@ -37,7 +37,7 @@ void Matrix::print_Matrix()
 	{
 		cout << "[ ";
 		for (int j = 0; j < num_cols; j++)
-			cout << fixed << setprecision(3) << rows[i].entries[j] << " ";
+			cout << fixed << setprecision(3) << entries[i][j] << " ";
 		cout << "]" << endl;
 	}
 	cout << endl;
@@ -65,59 +65,21 @@ void Matrix::set_user_cols()
 //Create the 2d matrix
 void Matrix::create_matrix()
 {
-	rows = new Row[num_rows];
+	entries = new float*[num_rows];
 	for(int i = 0; i < num_rows; i++)
-	{
-		rows[i].entries = new float[num_cols];
-	}
+		entries[i] = new float[num_cols];
 }
 
 //Fill the matrix with entries from the command line
 void Matrix::fill_matrix()
 {
 	for(int i = 0; i < num_rows; i++)
-	{
 		for(int j = 0; j < num_cols; j++)
 		{
 			cout << "Enter the entry at position row: " << i+1 << ", column: " << j+1 << ": ";
-			cin >> rows[i].entries[j];
+			cin >> entries[i][j];
 			cout << endl;
 		}
-	}
-}
-
-
-//Determine if the matrix is in RREF form. Return T if yes, F if not.
-bool Matrix::terminal_state()
-{
-	int offset = 0;
-	bool flag = false;
-
-	//Any way to reduce complexity below n^3?
-	for(int i = 0; i < num_rows; i++)
-	{
-		flag = false;
-
-		for(int j = 0; j < num_cols; j++)
-		{
-			if(rows[i].entries[j] != 0 && rows[i].entries[j] != 1) //All entries must be either 0 or 1
-				return false;
-
-			else if(rows[i].entries[j] == 1 && flag == false) //The first 1 in a row.
-			{
-				flag = true;
-
-				//Check column
-				for(int k = 0; k < num_rows; k++)
-				{
-					if(rows[k].entries[j] == 1 && i != k)
-						return false;
-				}
-			}
-		}
-	}
-
-	return true;
 }
 
 //Determine a row operation to perform, and call a corresponding function
@@ -130,10 +92,11 @@ void Matrix::perform_row_operation()
 		scale_row(working_row_index);
 		validate_column_down(working_column_index, working_row_index);
 	}
-	//The matrix is now in row-echelon form (not row reduced echelon form)
 
+	//The matrix is now in row-echelon form (not row reduced echelon form)
 	cout << "The matrix is now in row-echelon form: " << endl;
 	print_Matrix();
+
 	valid = false;
 
 	working_column_index = num_cols;
@@ -142,6 +105,7 @@ void Matrix::perform_row_operation()
 	//Perform row operations until the matrix is in row-reduced echelon form	
 	while(valid == false)
 	{
+		determine_indices();
 		validate_column_up(working_column_index, working_row_index);
 	}	
 }
@@ -151,11 +115,11 @@ void Matrix::sort_rows()
 {
 	bool break_flag = false;
 
-	if(rows[working_row_index+1].entries[working_column_index+1] == 0)
+	if(entries[working_row_index+1][working_column_index+1] == 0)
 		for(int j = working_column_index+1; j < num_cols; j++)
 		{
 			for(int i = working_row_index+1; i < num_rows; i++)
-				if(rows[i].entries[j] != 0)
+				if(entries[i][j] != 0)
 				{
 					swap_rows(working_row_index+1, i);
 					break_flag = true;
@@ -175,9 +139,9 @@ void Matrix::swap_rows(int x, int y)
 	float temp[num_cols];
 	for(int i = 0; i < num_cols; i++)
 	{
-		temp[i] = rows[y].entries[i];
-		rows[y].entries[i] = rows[x].entries[i];
-		rows[x].entries[i] = temp[i];
+		temp[i] = entries[y][i];
+		entries[y][i] = entries[x][i];
+		entries[x][i] = temp[i];
 	}
 
 }
@@ -188,12 +152,11 @@ void Matrix::scale_row(int row_num)
 	float scalar = 0;
 	for(int i = 0; i < num_cols; i++)
 	{
-		if(rows[row_num].entries[i] != 0 && scalar == 0)
-		{
-			scalar = rows[row_num].entries[i];
-		}
+		if(entries[row_num][i] != 0 && scalar == 0)
+			scalar = entries[row_num][i];
+	
 		if(scalar != 0)
-			rows[row_num].entries[i] = rows[row_num].entries[i] / scalar;
+			entries[row_num][i] = entries[row_num][i] / scalar;
 	}
 }
 
@@ -203,70 +166,59 @@ void Matrix::validate_column_down(int col_num, int row_num)
 {
 
 	for(int i = row_num+1; i < num_rows; i++)
-	{
-		if(rows[i].entries[col_num] != 0)
-			subtract_row(rows[i].entries[col_num], row_num, i);
-	}
+		if(entries[i][col_num] != 0)
+			subtract_row(entries[i][col_num], row_num, i);
 
 
 	if(row_num+1 == num_rows)
 		valid = true;
 }
 
-//Ensure all rows above row_num in the column col_num have 0's.
-void Matrix::validate_column_up(int col_num, int row_num)
+
+//Find the rightmost column with a leading 1 that has not yet been validated.
+void Matrix::determine_indices()
 {
 	bool break_flag = false;
-	bool wrong_index_flag = false;
-
-	for(int i = row_num-1; i >=0; i--)
+	
+	for(int i = working_row_index-1; i >=0; i--)
 	{
 		for(int j = 0; j < num_cols; j++)
-		{
-			if(rows[i].entries[j] != 0)
+			if(entries[i][j] != 0)
 			{
 
 				working_row_index = i+1;
 				working_column_index = j+1;
-
-				if(working_row_index != row_num || working_column_index != col_num)
-				{
-					wrong_index_flag = true;
-				}
+				
 				break_flag = true;	
 				break;
 			}
-		}
+	
 		if(break_flag == true)
 			break;
 	}
+}
+
+//Ensure all rows above row_num in the column col_num have 0's.
+void Matrix::validate_column_up(int col_num, int row_num)
+{
+	for(int i = row_num-2; i >= 0; i--)
+		if(entries[i][col_num-1] != 0)
+			subtract_row(entries[i][col_num-1], row_num-1, i);
 
 
-	if(wrong_index_flag == false)
-	{
-
-		for(int i = row_num-2; i >= 0; i--)
-		{
-			if(rows[i].entries[col_num-1] != 0)
-				subtract_row(rows[i].entries[col_num-1], row_num-1, i);
-		}
-
-		working_row_index--;
-		working_column_index--;
+	working_row_index--;
+	working_column_index--;
 
 
-		if(working_row_index == 0)
-			valid = true;
-	}
+	if(working_row_index == 0)
+		valid = true;
 }
 
 //Substract row x scale times from row y
 void Matrix::subtract_row(float scale, int x, int y)
 {
 	for(int i = 0; i < num_cols; i++)
-	{
-		rows[y].entries[i] = rows[y].entries[i] - scale * rows[x].entries[i];
-	}
+		entries[y][i] = entries[y][i] - scale * entries[x][i];
 
 }
 
@@ -280,6 +232,3 @@ int Matrix::get_num_cols()
 {
 	return num_cols;
 }
-
-
-
